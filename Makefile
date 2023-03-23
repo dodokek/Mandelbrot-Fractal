@@ -18,7 +18,7 @@ OBJ   = $(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRC))
 
 #linking
 all : $(OBJ) $(U_OBJ) 
-	$(CC) $(IFLAGS) $(CFLAGS) $^ -o $(OUTPUT_FILE_NAME)
+	$(CC) $(IFLAGS) $(CFLAGS) $^ -o $(OUTPUT_FILE_NAME) -lsfml-audio -lsfml-graphics -lsfml-window -lsfml-system
 
 #main
 $(OBJ_DIR)%.o : $(SRC_DIR)%.cpp
