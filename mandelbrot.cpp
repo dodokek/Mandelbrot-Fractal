@@ -2,15 +2,26 @@
 
 void StartDrawing()
 {
+    float center_x = 0;
+    float center_y = 0;
+
 
     sf::RenderWindow window(sf::VideoMode(W_WIDTH, W_HEIGHT), "Mandelbebra");
     window.setFramerateLimit(30);
 
-    DrawMndlSet (window);
 
-    window.display();
     while (window.isOpen())
     {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            center_x -= 10.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            center_x += 10.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            center_y -= 10.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            center_y += 10.f;
+    
+
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -19,18 +30,23 @@ void StartDrawing()
                 window.close();
             }
         }
+
+        DrawMndlSet (window, center_x, center_y);
+        window.display();
+
+        window.clear();
     }
 
     return;
 }
 
 
-void DrawMndlSet (sf::RenderWindow &window)
+void DrawMndlSet (sf::RenderWindow &window, float center_offset_x, float center_offset_y)
 {
     sf::RectangleShape CurPixel = GenerateRectangle (1, 1, 0, 0);
 
-    float center_x = W_WIDTH  / 2.f + W_HEIGHT * 0.3f;          // Calculating figure's center coords according to window size
-    float center_y = W_HEIGHT / 2.f;                            
+    float center_x = W_WIDTH  / 2.f + W_HEIGHT * 0.3f + center_offset_x;          // Calculating figure's center coords according to window size
+    float center_y = W_HEIGHT / 2.f + center_offset_y;                            
 
     float scale = 0.005f;                                       // Scale coeficient
 
@@ -65,21 +81,8 @@ void DrawMndlSet (sf::RenderWindow &window)
 
             if (total_iterations < MAX_ITERATIONS)
             {
-                if (total_iterations == 1)
-                    CurPixel.setFillColor (sf::Color::Green);     
-                else if (total_iterations == 2)
-                    CurPixel.setFillColor (sf::Color::Red);     
-                else if (total_iterations == 3)
-                    CurPixel.setFillColor (sf::Color::Blue);     
-                else if (total_iterations == 4)
-                    CurPixel.setFillColor (sf::Color::Magenta);
-                else if (total_iterations == 5)
-                    CurPixel.setFillColor (sf::Color::Cyan);  
-                else if (total_iterations == 6)
-                    CurPixel.setFillColor (sf::Color::White);     
-                else
-                    CurPixel.setFillColor (sf::Color::Yellow);     
 
+                CurPixel.setFillColor (sf::Color{(unsigned char)(total_iterations * 5),(unsigned char) (total_iterations * 10), 0});
             }
 
             window.draw (CurPixel);

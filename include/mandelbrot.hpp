@@ -35,7 +35,7 @@ struct Complex
 
 void StartDrawing();
 
-void DrawMndlSet (sf::RenderWindow &window);
+void DrawMndlSet (sf::RenderWindow &window, float center_offset_x, float center_offset_y);
 
 sf::RectangleShape GenerateRectangle (float width, float height, float x, float y);
 
