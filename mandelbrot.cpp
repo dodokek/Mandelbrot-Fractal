@@ -19,7 +19,6 @@ void StartDrawing()
                 window.close();
             }
         }
-
     }
 
     return;
@@ -28,53 +27,65 @@ void StartDrawing()
 
 void DrawMndlSet (sf::RenderWindow &window)
 {
-    sf::RectangleShape CurPoint = GenerateRectangle (1, 1, 0, 0);
+    sf::RectangleShape CurPixel = GenerateRectangle (1, 1, 0, 0);
 
-    Complex point = {0, 0};
-    int counter = 0;
+    float center_x = W_WIDTH  / 2.f + W_HEIGHT * 0.3f;          // Calculating figure's center coords according to window size
+    float center_y = W_HEIGHT / 2.f;                            
 
-    for (float real_part = LEFT_B; real_part < RIGHT_B; real_part += 0.01f)      // Перебираю все такие "C"
+    float scale = 0.005f;                                       // Scale coeficient
+
+    for (int cur_y = 0; cur_y < W_HEIGHT; cur_y++)              // Iterating through all imaginary parts of "c"
     {
-        counter++;
-        // printf ("Iteration %d\n", counter);
+        float c0_im_part = ((float)cur_y - center_y) * scale;
 
-        int sub_counter = 0;
+        for (int cur_x = 0; cur_x < W_WIDTH; cur_x++)           // Iterating through all real parts of "c"
+        {                                                                                        
+            float c0_real_part = ((float)cur_x - center_x) * scale;
 
-        for (float im_part = LEFT_B; im_part < RIGHT_B; im_part += 0.01f)
-        {
-            // printf ("Iterating Real: %f, Im: %f \n", real_part, im_part);
+            int total_iterations = 0;
 
-            point = {0, 0};
-            int out_of_bound_iteration = 0;
-
-            for (int iteration = 0; iteration < MAX_ITERATIONS; iteration++)
+            for (float x = c0_real_part, y = c0_im_part; total_iterations < MAX_ITERATIONS; total_iterations++)
             {
-                float cur_real = point.real * point.real - point.im * point.im + real_part;
-                float cur_im = 2 * point.im * point.real + im_part;
+                float x_pow    = x * x;
+                float y_pow    = y * y;                 // avoiding arethmetic bugs
+                float x_mul_y  = x * y;
 
-                // printf("\tCur real: %f, Cur Im: %f\n", cur_real, cur_im);
+                float vector_length = x_pow + y_pow;
 
-                if (cur_real * cur_real + cur_im * cur_im > MAX_DISTANCE * MAX_DISTANCE)
-                {
-                    out_of_bound_iteration = iteration;
+                if (vector_length >= MAX_DISTANCE)
                     break;
-                }
-
-                point = {cur_real, cur_im};
+                    
+                x = x_pow - y_pow     + c0_real_part;   // Z_{n+1} = (Z_{n}) ^ 2 + C_0
+                y = x_mul_y + x_mul_y + c0_im_part;     // According to this formula counting Real and Imm parts
             }
+            CurPixel.setPosition (float(cur_x), float(cur_y));
+            CurPixel.setFillColor (sf::Color::Black);
 
-            if (out_of_bound_iteration < MAX_ITERATIONS)
+            // printf ("Iterations: %d\n", total_iterations);
+
+            if (total_iterations < MAX_ITERATIONS)
             {
-                // printf ("Suitable dot(%f;%f): %d : %d\n",
-                //         point.real, point.im, counter, sub_counter++);
+                if (total_iterations == 1)
+                    CurPixel.setFillColor (sf::Color::Green);     
+                else if (total_iterations == 2)
+                    CurPixel.setFillColor (sf::Color::Red);     
+                else if (total_iterations == 3)
+                    CurPixel.setFillColor (sf::Color::Blue);     
+                else if (total_iterations == 4)
+                    CurPixel.setFillColor (sf::Color::Magenta);
+                else if (total_iterations == 5)
+                    CurPixel.setFillColor (sf::Color::Cyan);  
+                else if (total_iterations == 6)
+                    CurPixel.setFillColor (sf::Color::White);     
+                else
+                    CurPixel.setFillColor (sf::Color::Yellow);     
 
-                CurPoint.setPosition (real_part * 10 + 600, im_part * 10 + 400);
-                window.draw(CurPoint);
             }
+
+            window.draw (CurPixel);
 
         }
     }
-
 
 }
 

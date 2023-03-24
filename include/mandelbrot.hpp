@@ -5,12 +5,13 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <stdio.h>
+#include <math.h>
 
 //------------------------------------------
 
-const int MAX_ITERATIONS = 100;
+const int   MAX_ITERATIONS  = 256;
 
-const int MAX_DISTANCE = 2;
+const int MAX_DISTANCE = 100.f;
 
 const float LEFT_B = -3;
 
