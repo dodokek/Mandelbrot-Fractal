@@ -2,8 +2,9 @@
 
 void StartDrawing()
 {
-    float center_x = 0;
+    float center_x = 0;     // initial parameters
     float center_y = 0;
+    float scale = 0.005f;   
 
 
     sf::RenderWindow window(sf::VideoMode(W_WIDTH, W_HEIGHT), "Mandelbebra");
@@ -20,7 +21,10 @@ void StartDrawing()
             center_y -= 10.f;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             center_y += 10.f;
-    
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::F2))
+            scale *= 1.25f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
+            scale /= 1.25f;
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -31,7 +35,7 @@ void StartDrawing()
             }
         }
 
-        DrawMndlSet (window, center_x, center_y);
+        DrawMndlSet (window, center_x, center_y, scale);
         window.display();
 
         window.clear();
@@ -41,14 +45,13 @@ void StartDrawing()
 }
 
 
-void DrawMndlSet (sf::RenderWindow &window, float center_offset_x, float center_offset_y)
+void DrawMndlSet (sf::RenderWindow &window, float center_offset_x, float center_offset_y, float scale)
 {
     sf::RectangleShape CurPixel = GenerateRectangle (1, 1, 0, 0);
 
     float center_x = W_WIDTH  / 2.f + W_HEIGHT * 0.3f + center_offset_x;          // Calculating figure's center coords according to window size
     float center_y = W_HEIGHT / 2.f + center_offset_y;                            
 
-    float scale = 0.005f;                                       // Scale coeficient
 
     for (int cur_y = 0; cur_y < W_HEIGHT; cur_y++)              // Iterating through all imaginary parts of "c"
     {
