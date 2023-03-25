@@ -6,6 +6,13 @@ void StartDrawing()
     float center_y = 0;
     float scale = 0.005f;   
 
+    sf::Clock clock; // starts the clock
+
+    sf::Font font;
+    font.loadFromFile("img/SEASRN__.ttf");
+    sf::Text cycle_text = *GenerateTextSprite (font, "Cycle time: ", 50, 50);
+    cycle_text.setCharacterSize (20);
+    cycle_text.setFillColor (sf::Color::Red);
 
     sf::RenderWindow window(sf::VideoMode(W_WIDTH, W_HEIGHT), "Mandelbebra");
     window.setFramerateLimit(30);
@@ -13,6 +20,8 @@ void StartDrawing()
 
     while (window.isOpen())
     {
+        clock.restart();
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
             center_x -= 10.f;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
@@ -36,6 +45,14 @@ void StartDrawing()
         }
 
         DrawMndlSet (window, center_x, center_y, scale);
+        sf::Time elapsed_time = clock.getElapsedTime();
+        
+        char text_buffer[100];
+        sprintf (text_buffer, "Cycle time: %f\n", elapsed_time.asSeconds());
+        cycle_text.setString (text_buffer);
+        window.draw (cycle_text);
+
+
         window.display();
 
         window.clear();
@@ -80,11 +97,8 @@ void DrawMndlSet (sf::RenderWindow &window, float center_offset_x, float center_
             CurPixel.setPosition (float(cur_x), float(cur_y));
             CurPixel.setFillColor (sf::Color::Black);
 
-            // printf ("Iterations: %d\n", total_iterations);
-
             if (total_iterations < MAX_ITERATIONS)
             {
-
                 CurPixel.setFillColor (sf::Color{(unsigned char)(total_iterations * 5),(unsigned char) (total_iterations * 10), 0});
             }
 
@@ -92,7 +106,6 @@ void DrawMndlSet (sf::RenderWindow &window, float center_offset_x, float center_
 
         }
     }
-
 }
 
 
@@ -104,4 +117,18 @@ sf::RectangleShape GenerateRectangle (float width, float height, float x, float 
     rectangle.setFillColor(sf::Color::Green);
  
     return rectangle;
+}
+
+
+sf::Text *GenerateTextSprite (sf::Font &font, char* content, float x_coord, float y_coord)
+{
+    sf::Text *text = new sf::Text;          // НЕ ЗАБЫТЬ СЛОВИТЬ Excepriont сука!!!
+
+    text->setFont(font);
+    text->setFillColor(sf::Color::Red);
+    text->setString(content);
+    text->setCharacterSize(48);
+    text->setPosition(x_coord, y_coord);
+
+    return text;
 }
