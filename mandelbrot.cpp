@@ -108,6 +108,75 @@ void DrawMndlSet (sf::RenderWindow &window, float center_offset_x, float center_
     }
 }
 
+// ======================= O - for Optimization with AVX =========================
+
+void DrawMndlSetAVX (sf::RenderWindow &window, float center_offset_x, float center_offset_y, float scale)
+{
+    sf::RectangleShape CurPixel = GenerateRectangle (1, 1, 0, 0);
+
+    float center_x = W_WIDTH  / 2.f + W_HEIGHT * 0.3f + center_offset_x;          // Calculating figure's center coords according to window size
+    float center_y = W_HEIGHT / 2.f + center_offset_y;                            
+
+    __m256 center_x_avx = _mm256_set1_ps (center_x);
+    __m256 center_y_avx = _mm256_set1_ps (center_y);
+
+    __m256 offset_vector = _mm256_set_ps  (0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f);
+
+    __m256 MAX_VECTOR_LEN = _mm256_set1_ps (100.f);
+
+    for (int cur_y = 0; cur_y < W_HEIGHT; cur_y++)              // Iterating through all imaginary parts of "c"
+    {
+        __m256 im_part_avx = _mm256_set1_ps (cur_y);                                                        // Calculating the vector of y 
+        im_part_avx = _mm256_mul_ps(_mm256_sub_ps (im_part_avx, center_y_avx), _mm256_set1_ps (scale));     // in decart system (y_j, ... , y_j)
+
+        for (int cur_x = 0; cur_x < W_WIDTH; cur_x += 8)           // Iterating through all real parts of "c"
+        {     
+            __m256 real_part_avx = _mm256_add_ps(_mm256_set1_ps (cur_x), offset_vector);                                   // Calculating the vector of x 
+            real_part_avx        = _mm256_mul_ps(_mm256_sub_ps (real_part_avx, center_x_avx), _mm256_set1_ps (scale));     // (x_i, x_i + 1, ... , x_i + 7)
+
+            __m256i total_iterations = _mm256_set1_epi32 (0);        // Initializing vector of operations counter
+
+            for (__m256 x = real_part_avx, y = im_part_avx;;)
+            {
+                __m256 x2   = _mm256_mul_ps (x, x);
+                __m256 y2   = _mm256_mul_ps (y, y);
+                __m256 xy   = _mm256_mul_ps (x, y);
+
+                __m256 length2_avx = _mm256_add_ps (x2, y2);
+
+                __m256 cmp_res = _mm256_cmp_ps (MAX_VECTOR_LEN, length2_avx, _CMP_GT_OQ); // comparing each distance with max len
+
+                int comparison_mask = _mm256_movemask_ps (cmp_res); // moves the most significant bit of each float to integer bits
+
+                if (!comparison_mask) // if all points out of range then break
+                {    
+                    break;
+                }    
+
+                total_iterations = _mm256_add_epi32 (total_iterations, _mm256_castps_si256 (cmp_res));
+
+                x = _mm256_add_ps (_mm256_sub_ps (x2, y2), real_part_avx); // Z_{n+1} = (Z_{n}) ^ 2 + C_0
+                y = _mm256_add_ps (_mm256_add_ps (xy, xy), im_part_avx);   // According to this formula counting Real and Imm parts 
+            }
+
+            //-------
+                // Here need to add calculation of color of each of 8 dots
+            //-------
+
+            // CurPixel.setPosition (float(cur_x), float(cur_y));
+            // CurPixel.setFillColor (sf::Color::Black);
+
+            // if (total_iterations < MAX_ITERATIONS)
+            // {
+            //     CurPixel.setFillColor (sf::Color{(unsigned char)(total_iterations * 5),(unsigned char) (total_iterations * 10), 0});
+            // }
+
+            window.draw (CurPixel);
+
+        }
+    }
+}
+
 
 sf::RectangleShape GenerateRectangle (float width, float height, float x, float y)
 {
@@ -122,7 +191,7 @@ sf::RectangleShape GenerateRectangle (float width, float height, float x, float 
 
 sf::Text *GenerateTextSprite (sf::Font &font, char* content, float x_coord, float y_coord)
 {
-    sf::Text *text = new sf::Text;          // НЕ ЗАБЫТЬ СЛОВИТЬ Excepriont сука!!!
+    sf::Text *text = new sf::Text;          // НЕ ЗАБЫТЬ СЛОВИТЬ Exceptiont сука!!!
 
     text->setFont(font);
     text->setFillColor(sf::Color::Red);
