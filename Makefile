@@ -23,7 +23,7 @@ all : $(OBJ) $(U_OBJ)
 #main
 $(OBJ_DIR)%.o : $(SRC_DIR)%.cpp
 	mkdir -p $(@D)
-	$(CC) -mavx $(IFLAGS) $(CFLAGS) -c $^ -o $@
+	$(CC) -mavx2 $(IFLAGS) $(CFLAGS) -c $^ -o $@
 
 clear: 
 	rm -f $(OBJ_DIR)*.o
