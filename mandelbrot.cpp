@@ -44,11 +44,15 @@ void StartDrawing()
             }
         }
 
+        // DrawMndlSet (window, center_x, center_y, scale);
         DrawMndlSetAVX (window, center_x, center_y, scale);
+        
         sf::Time elapsed_time = clock.getElapsedTime();
         
         char text_buffer[100];
         sprintf (text_buffer, "FPS: %f\n", 1/elapsed_time.asSeconds());
+        printf (text_buffer);
+
         cycle_text.setString (text_buffer);
         window.draw (cycle_text);
 
@@ -102,7 +106,7 @@ void DrawMndlSet (sf::RenderWindow &window, float center_offset_x, float center_
                 CurPixel.setFillColor (sf::Color{(unsigned char)(total_iterations * 5),(unsigned char) (total_iterations * 10), 0});
             }
 
-            window.draw (CurPixel);
+            // window.draw (CurPixel);
 
         }
     }
@@ -120,9 +124,11 @@ void DrawMndlSetAVX (sf::RenderWindow &window, float center_offset_x, float cent
     __m256 center_x_avx = _mm256_set1_ps (center_x);
     __m256 center_y_avx = _mm256_set1_ps (center_y);
 
-    __m256 offset_vector = _mm256_set_ps  (0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f);
+    __m256 offset_vector = _mm256_set_ps  (7.f, 6.f, 5.f, 4.f, 3.f, 2.f, 1.f, 0.f);
 
-    __m256 MAX_VECTOR_LEN = _mm256_set1_ps (100.f);
+    // __m256 offset_vector = _mm256_set_ps  (0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f); - if you want some funny drawings
+
+    __m256 MAX_VECTOR_LEN = _mm256_set1_ps (MAX_DISTANCE);
 
     for (int cur_y = 0; cur_y < W_HEIGHT; cur_y++)              // Iterating through all imaginary parts of "c"
     {
@@ -134,7 +140,7 @@ void DrawMndlSetAVX (sf::RenderWindow &window, float center_offset_x, float cent
             __m256 real_part_avx = _mm256_add_ps(_mm256_set1_ps (float(cur_x)), offset_vector);                                   // Calculating the vector of x 
             real_part_avx        = _mm256_mul_ps(_mm256_sub_ps (real_part_avx, center_x_avx), _mm256_set1_ps (scale));     // (x_i, x_i + 1, ... , x_i + 7)
 
-            __m256i total_iterations = _mm256_setzero_si256 ();        // Initializing vector of operations counter
+            __m256i total_iterations = _mm256_set1_epi32 (0);        // Initializing vector of operations counter
 
             __m256 x = real_part_avx;
             __m256 y = im_part_avx;
@@ -156,7 +162,7 @@ void DrawMndlSetAVX (sf::RenderWindow &window, float center_offset_x, float cent
                     break;
                 }    
 
-                total_iterations = _mm256_sub_epi32 (total_iterations, _mm256_castps_si256 (cmp_res));
+                total_iterations = _mm256_sub_epi32 (total_iterations, _mm256_castps_si256 (cmp_res));  // here need to sub instead of add cuz __mm256_cmp_ps sets -1 in result of comparison
 
                 x = _mm256_add_ps (_mm256_sub_ps (x2, y2), real_part_avx); // Z_{n+1} = (Z_{n}) ^ 2 + C_0
                 y = _mm256_add_ps (_mm256_add_ps (xy, xy), im_part_avx);   // According to this formula counting Real and Imm parts 
@@ -164,38 +170,26 @@ void DrawMndlSetAVX (sf::RenderWindow &window, float center_offset_x, float cent
 
             uint32_t* iterations_array = (uint32_t*) &total_iterations;
 
-            for (int i = 0; i < 8; i++)
+            for (int point_ctr = 0; point_ctr < 8; point_ctr++)
             {
-                // printf ("Iterations: %d\n", iterations_array[i]);
-                CurPixel.setPosition (float(cur_x + i), float(cur_y));
+                // printf ("Iterations: %d\n", iterations_array[point_ctr]);
+                CurPixel.setPosition (float(cur_x + point_ctr), float(cur_y));
 
                 CurPixel.setFillColor (sf::Color::Black);
 
-                if (iterations_array[i] < MAX_ITERATIONS)
+                if (iterations_array[point_ctr] < MAX_ITERATIONS)
                 {
-                    CurPixel.setFillColor (sf::Color{(unsigned char)(iterations_array[i] * 5),(unsigned char) (iterations_array[i] * 10), 0});
-                    // CurPixel.setFillColor (sf::Color::Green);
+                    CurPixel.setFillColor (sf::Color{(unsigned char)(iterations_array[point_ctr] * 5),(unsigned char) (iterations_array[point_ctr] * 10), 0});
                 }
                 window.draw (CurPixel);
             }
-
-            //-------
-                // Here need to add calculation of color of each of 8uint32_t dots
-            //-------
-
-            // CurPixel.setPosition (float(cur_x), float(cur_y));
-
-            // if (total_iterations < MAX_ITERATIONS)
-            // {
-            //     CurPixel.setFillColor (sf::Color{(unsigned char)(total_iterations * 5),(unsigned char) (total_iterations * 10), 0});
-            // }
 
 
         }
     }
 }
 
-
+ 
 sf::RectangleShape GenerateRectangle (float width, float height, float x, float y)
 {
     sf::RectangleShape rectangle(sf::Vector2f(120, 50));
