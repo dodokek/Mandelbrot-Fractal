@@ -1,5 +1,9 @@
 #include "./include/mandelbrot.hpp"
 
+#define AVX_OPTIMIZE 1
+// #define NO_DRAW 1
+
+
 void StartDrawing()
 {
     float center_x = 0;     // initial parameters
@@ -44,9 +48,13 @@ void StartDrawing()
             }
         }
 
-        // DrawMndlSet (window, center_x, center_y, scale);
-        DrawMndlSetAVX (window, center_x, center_y, scale);
-        
+        #ifndef AVX_OPTIMIZE
+            DrawMndlSet (window, center_x, center_y, scale);
+        #endif
+        #ifdef AVX_OPTIMIZE
+            DrawMndlSetAVX (window, center_x, center_y, scale);
+        #endif
+
         sf::Time elapsed_time = clock.getElapsedTime();
         
         char text_buffer[100];
@@ -84,6 +92,9 @@ void DrawMndlSet (sf::RenderWindow &window, float center_offset_x, float center_
 
             int total_iterations = 0;
 
+            // for (int i = 0; i < 100; i++)
+            // {
+
             for (float x = c0_real_part, y = c0_im_part; total_iterations < MAX_ITERATIONS; total_iterations++)
             {
                 float x_pow    = x * x;
@@ -106,8 +117,10 @@ void DrawMndlSet (sf::RenderWindow &window, float center_offset_x, float center_
                 CurPixel.setFillColor (sf::Color{(unsigned char)(total_iterations * 5),(unsigned char) (total_iterations * 10), 0});
             }
 
-            // window.draw (CurPixel);
-
+            #ifndef NO_DRAW
+                    window.draw (CurPixel);
+            #endif
+            // }
         }
     }
 }
@@ -168,6 +181,8 @@ void DrawMndlSetAVX (sf::RenderWindow &window, float center_offset_x, float cent
                 y = _mm256_add_ps (_mm256_add_ps (xy, xy), im_part_avx);   // According to this formula counting Real and Imm parts 
             }
 
+            
+
             uint32_t* iterations_array = (uint32_t*) &total_iterations;
 
             for (int point_ctr = 0; point_ctr < 8; point_ctr++)
@@ -181,10 +196,10 @@ void DrawMndlSetAVX (sf::RenderWindow &window, float center_offset_x, float cent
                 {
                     CurPixel.setFillColor (sf::Color{(unsigned char)(iterations_array[point_ctr] * 5),(unsigned char) (iterations_array[point_ctr] * 10), 0});
                 }
-                window.draw (CurPixel);
+                #ifndef NO_DRAW
+                    window.draw (CurPixel);
+                #endif
             }
-
-
         }
     }
 }
