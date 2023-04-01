@@ -41,8 +41,6 @@ void DrawMndlSet (sf::RenderWindow &window, float center_offset_x, float center_
 
 void DrawMndlSetAVX (sf::RenderWindow &window, float center_offset_x, float center_offset_y, float scale);
 
-sf::RectangleShape GenerateRectangle (float width, float height, float x, float y);
-
 sf::Text *GenerateTextSprite (sf::Font &font, char* content, float x_coord, float y_coord);
 
 #endif

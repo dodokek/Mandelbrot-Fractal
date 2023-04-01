@@ -1,7 +1,7 @@
 #include "./include/mandelbrot.hpp"
 
-#define AVX_OPTIMIZE 1
-// #define NO_DRAW 1
+// #define AVX_OPTIMIZE
+#define NO_DRAW
 
 
 void StartDrawing()
@@ -24,7 +24,6 @@ void StartDrawing()
 
     while (window.isOpen())
     {
-        clock.restart();
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
             center_x -= 10.f;
@@ -39,19 +38,19 @@ void StartDrawing()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
             scale /= 1.25f;
 
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-            {        
-                window.close();
-            }
-        }
+        // sf::Event event;
+        // while (window.pollEvent(event))
+        // {
+        //     if (event.type == sf::Event::Closed)
+        //     {        
+        //         window.close();
+        //     }
+        // }
+        clock.restart();
 
         #ifndef AVX_OPTIMIZE
             DrawMndlSet (window, center_x, center_y, scale);
-        #endif
-        #ifdef AVX_OPTIMIZE
+        #else
             DrawMndlSetAVX (window, center_x, center_y, scale);
         #endif
 
@@ -76,7 +75,7 @@ void StartDrawing()
 
 void DrawMndlSet (sf::RenderWindow &window, float center_offset_x, float center_offset_y, float scale)
 {
-    sf::RectangleShape CurPixel = GenerateRectangle (1, 1, 0, 0);
+    sf::RectangleShape CurPixel(sf::Vector2f(1, 1));
 
     float center_x = W_WIDTH  / 2.f + W_HEIGHT * 0.3f + center_offset_x;          // Calculating figure's center coords according to window size
     float center_y = W_HEIGHT / 2.f + center_offset_y;                            
@@ -129,7 +128,7 @@ void DrawMndlSet (sf::RenderWindow &window, float center_offset_x, float center_
 
 void DrawMndlSetAVX (sf::RenderWindow &window, float center_offset_x, float center_offset_y, float scale)
 {
-    sf::RectangleShape CurPixel = GenerateRectangle (1, 1, 0, 0);
+    sf::RectangleShape CurPixel(sf::Vector2f(1, 1));
 
     float center_x = W_WIDTH  / 2.f + W_HEIGHT * 0.3f + center_offset_x;          // Calculating figure's center coords according to window size
     float center_y = W_HEIGHT / 2.f + center_offset_y;                            
@@ -202,17 +201,6 @@ void DrawMndlSetAVX (sf::RenderWindow &window, float center_offset_x, float cent
             }
         }
     }
-}
-
- 
-sf::RectangleShape GenerateRectangle (float width, float height, float x, float y)
-{
-    sf::RectangleShape rectangle(sf::Vector2f(120, 50));
-    rectangle.setSize(sf::Vector2f(height, width));
-    rectangle.setPosition(x, y);
-    rectangle.setFillColor(sf::Color::Green);
- 
-    return rectangle;
 }
 
 
