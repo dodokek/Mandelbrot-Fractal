@@ -27,17 +27,15 @@ y = _mm256_add_ps (_mm256_add_ps (xy, xy), im_part_avx);   // According to this 
 
 | Version      | Compilation flags | FPS |
 | ------      | :---------------: | :------------: | 
-| No AVX      | none              | 6.5            |  
-| No AVX      | -О3               | 11             |  
-| No AVX      | -О3 -fprofile-use | 11.3           | 
-| No AVX      | -Оfast            | 11.5           | 
-| AVX         | none              | 16             |  
-| AVX         | -О3               | 29             | 
-| AVX         | -О3 -fprofile-use | 29             | 
-| AVX         | -Ofast            | 30.8           | 
+| No AVX      | none              | 7.5            |  
+| No AVX      | -О3               | 14             |  
+| No AVX      | -Оfast            | 15.3           | 
+| AVX         | none              | 24             |  
+| AVX         | -О3               | 80             | 
+| AVX         | -Ofast            | 84             | 
 
 
-As we can see AVX optimization speeded up the program more than 3 times. With the help of compiler flags we went from 6 to whole 30 fps, brilliant.
+Performance was tested on the same scale and position of fractal. According to the table, with AVX instructions FPS has increased approximately 6 times.
 
 ## SFML strikes back
 
