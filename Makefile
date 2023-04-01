@@ -23,7 +23,7 @@ all : $(OBJ) $(U_OBJ)
 #main
 $(OBJ_DIR)%.o : $(SRC_DIR)%.cpp
 	mkdir -p $(@D)
-	$(CC) -Ofast -fprofile-use -mavx2 $(IFLAGS) $(CFLAGS) -c $^ -o $@
+	$(CC) -fprofile-use -mavx2 $(IFLAGS) $(CFLAGS) -c $^ -o $@
 
 clear: 
 	rm -f $(OBJ_DIR)*.o
