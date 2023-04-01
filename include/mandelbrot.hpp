@@ -37,9 +37,9 @@ struct Complex
 
 void StartDrawing();
 
-void DrawMndlSet (sf::RenderWindow &window, float center_offset_x, float center_offset_y, float scale);
+void DrawMndlSet (sf::Image &canvas, float center_offset_x, float center_offset_y, float scale);
 
-void DrawMndlSetAVX (sf::RenderWindow &window, float center_offset_x, float center_offset_y, float scale);
+void DrawMndlSetAVX (sf::Image &canvas, float center_offset_x, float center_offset_y, float scale);
 
 sf::Text *GenerateTextSprite (sf::Font &font, char* content, float x_coord, float y_coord);
 
