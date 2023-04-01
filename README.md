@@ -109,5 +109,7 @@ SFML library, which I used in my project has it's disadvantages, such as slow ev
 
 ## Conclusion
 
+AVX optimization made a huge impact on FPS. By calculating 8 points at once, cycle of drawing speeded up almost 7 times.
+
 ## Useful links 
 https://www.laruence.com/sse/
