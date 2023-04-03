@@ -48,7 +48,7 @@ As we can see from the code above, calculation of the single pixel on the screen
  This means that if our screen size is 800 x 600, there is a posssibility of doing 800 * 600 * 256 = **122 880 000 iterations** per drawing cycle
 
 The performance of this approach is nothing more than really slow. **FPS: 7**
->Test are made on Honor Magic book. Core i5 9th gen. No optimization flags
+>Tests were made on Honor Magic book. Core i5 9th gen. No optimization flags
 
 We definetly need to do something with it... Wait, I have an idea!
 
@@ -109,7 +109,9 @@ SFML library, which I used in my project has it's disadvantages, such as slow ev
 
 ## Conclusion
 
-AVX optimization made a huge impact on FPS. By calculating 8 points at once, cycle of drawing speeded up almost 7 times.
+AVX optimization made a huge impact on FPS. By calculating 8 points at once, cycle of drawing speeded up almost 6 times. 
+
+I strongly recommend to use this method, because it's pretty much straight forward.
 
 ## Useful links 
 https://www.laruence.com/sse/
