@@ -16,12 +16,12 @@ Here is the example of what we want to get as a result of drawing.
 Each dot of this fractal is being drawn independently according to the algorithm:
 
 Let's take a sequence on a complex plain wich looks like this:
-~~~
-Z_(n + 1) = Z_n ^ 2 + C_0
-~~~
-Where **C_0** is the point on the complex plane.
 
- The color of the point depends on how much iterations were made before the distance from **Z_n** to **C_0** got bigger than 2.
+$Z_{n + 1} = Z_n ^ 2 + C_0$
+
+Where $C_0$ is the point on the complex plane.
+
+ The color of the point depends on how much iterations were made before the distance from $Z_n$ to $C_0$ got bigger than 2.
 
 Here is the main part of calculations:
 ~~~C++
