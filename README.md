@@ -70,10 +70,8 @@ __m256 cmp_res = _mm256_cmp_ps (MAX_VECTOR_LEN, length2_avx, _CMP_GT_OQ);
 
 comparison_mask = _mm256_movemask_ps (cmp_res); 
 
-if (!comparison_mask) 
-{    
+if (!comparison_mask)     
     break;
-}    
 
 total_iterations = _mm256_sub_epi32 (total_iterations, _mm256_castps_si256 (cmp_res));  
 
@@ -89,14 +87,14 @@ According to our calculations, the FPS should increace tremendeously, let's chec
 
 ## Performance
 
-| Version      | Compilation flags | FPS |
-| ------      | :---------------: | :------------: | 
-| No AVX      | none              | 7.5            |  
-| No AVX      | -О3               | 14             |  
-| No AVX      | -Оfast            | 15.3           | 
-| AVX         | none              | 24             |  
-| AVX         | -О3               | 80             | 
-| AVX         | -Ofast            | 84             | 
+| Version      | Compilation flags | FPS           | Speed growth |
+| ------      | :---------------: | :------------: | :----: |
+| No AVX      | none              | 7.5            | 0.53 |
+| No AVX      | -О3               | 14             | 1 |
+| No AVX      | -Оfast            | 15.3           | 1.09 |
+| AVX         | none              | 24             | 1.7 |
+| AVX         | -О3               | 80             | 5.7|
+| AVX         | -Ofast            | 84             |  6 |
 
 
 Performance was tested on the same scale and position of fractal. According to the table, with AVX instructions FPS has increased approximately 6 times.
@@ -110,6 +108,7 @@ SFML library, which I used in my project has it's disadvantages, such as slow ev
 ## Conclusion
 
 AVX optimization made a huge impact on FPS. By calculating 8 points at once, cycle of drawing speeded up almost 6 times. 
+Also, without 
 
 I strongly recommend to use this method, because it's pretty much straight forward.
 
