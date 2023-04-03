@@ -56,7 +56,9 @@ We definetly need to do something with it... Wait, I have an idea!
  
 Each point is being calculated independently. This means, we can calculate several points simultaniously. 
 
-AVX instructions are just perfect for this task. With them we able to count up to 8 points at a time. Let's improve our program:
+AVX instructions are just perfect for this task. With them we able to count up to 8 points at a time. Let's improve our program.
+
+All variables will turn into *_m256* type, equal to vector of 8 floating point variables. The only difference would be in comparison with maximum distance.  
 
 ~~~C++
 
