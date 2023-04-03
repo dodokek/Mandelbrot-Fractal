@@ -110,9 +110,10 @@ SFML library, which I used in my project has it's disadvantages, such as slow ev
 ## Conclusion
 
 AVX optimization made a huge impact on FPS. By calculating 8 points at once, cycle of drawing speeded up almost 6 times. 
-Also, without 
 
-I strongly recommend to use this method, because it's pretty much straight forward.
+Also, without optimization flags this method is not valid. As we could see from performance table, the rise in performance without compilaion flags was really small. 
+
+Interesting fact: As it turned out during the tests, FPS can rise up to 100 if battery settings on PC are set to *High performance*.
 
 ## Useful links 
 https://www.laruence.com/sse/
