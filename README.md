@@ -115,5 +115,5 @@ Also, without optimization flags this method is not valid. As we could see from 
 Interesting fact: As it turned out during the tests, FPS can rise up to 100 if battery settings on PC are set to *High performance*.
 
 ## Useful links 
-https://www.laruence.com/sse/   -    AVX documentation
+https://www.laruence.com/sse/   -    AVX documentation </br>
 https://mathworld.wolfram.com/MandelbrotSet.html  - More info about Mandelbrot Set
