@@ -2,7 +2,7 @@
 
 ## Overview
 
-The goal of this project is drawing the *Mandelbrot set* the most effecient way. To maximize performance we are going to use *AVX instructions*. 
+The goal of this project is drawing the *Mandelbrot set* the most effecient way. To maximize performance we are going to use *AVX2 instructions*. 
 
 Here is the example of what we want to get as a result of drawing.
  </br>
@@ -13,7 +13,7 @@ Here is the example of what we want to get as a result of drawing.
 
 ## Drawing algorithm
 
-Each dot of this fractal is being drawn independently according to the algorithm:
+We draw each dot of this set independently according to the algorithm:
 
 Let's take a sequence on a complex plain wich looks like this:
 ~~~
@@ -31,7 +31,7 @@ for (x = c0_real_part, y = c0_im_part; iters < 256; iters++)
     y_pow    = y * y;
     x_mul_y  = x * y;
 
-    vector_length = x_pow + y_pow;
+    sqr_vector_length = x_pow + y_pow;
 
     if (vector_length >= 2)
         break;
@@ -48,15 +48,16 @@ As we can see from the code above, calculation of the single pixel on the screen
  This means that if our screen size is 800 x 600, there is a posssibility of doing 800 * 600 * 256 = **122 880 000 iterations** per drawing cycle
 
 The performance of this approach is nothing more than really slow. **FPS: 7**
->Test are made on Honor Magic book. Core i5 9th gen. No optimization flags
+
+>System info: Core i5 9th gen. No optimization flags
 
 We definetly need to do something with it... Wait, I have an idea!
 
-## Using AVX instructions
+## Using AVX2 instructions
  
-Each point is being calculated independently. This means, we can calculate several points simultaniously. 
+We draw each point independently. This means, we can calculate several points simultaniously. 
 
-AVX instructions are just perfect for this task. With them we able to count up to 8 points at a time. Let's improve our program:
+AVX2 instructions are just perfect for this task. With them we able to count up to 8 points at a time. Let's improve our program:
 
 ~~~C++
 
@@ -89,14 +90,14 @@ According to our calculations, the FPS should increace tremendeously, let's chec
 
 ## Performance
 
-| Version      | Compilation flags | FPS |
-| ------      | :---------------: | :------------: | 
-| No AVX      | none              | 7.5            |  
-| No AVX      | -О3               | 14             |  
-| No AVX      | -Оfast            | 15.3           | 
-| AVX         | none              | 24             |  
-| AVX         | -О3               | 80             | 
-| AVX         | -Ofast            | 84             | 
+| Version      | Compilation flags | FPS           | Speed growth  |
+| ------      | :---------------: | :------------: | :---------- : |
+| No AVX      | none              | 7.5            |   0.49        |
+| No AVX      | -О3               | 14             |   0.91      |
+| No AVX      | -Оfast            | 15.3           |   1          |
+| AVX         | none              | 24             |   1.56      |
+| AVX         | -О3               | 80             |   5.2       |
+| AVX         | -Ofast            | 84             |   5.8      |
 
 
 Performance was tested on the same scale and position of fractal. According to the table, with AVX instructions FPS has increased approximately 6 times.
@@ -112,4 +113,5 @@ SFML library, which I used in my project has it's disadvantages, such as slow ev
 AVX optimization made a huge impact on FPS. By calculating 8 points at once, cycle of drawing speeded up almost 7 times.
 
 ## Useful links 
-https://www.laruence.com/sse/
+https://www.laruence.com/sse/   -    AVX documentation
+https://mathworld.wolfram.com/MandelbrotSet.html  - More info about Mandelbrot Set
