@@ -4,7 +4,7 @@
 
 The goal of this project is drawing the *Mandelbrot set* the most effecient way. To maximize performance we are going to use *AVX2 instructions*. 
 
-Here is the example of what we want to get as a result of drawing.
+Example:
  </br>
  </br>
 <img src="https://user-images.githubusercontent.com/57039216/227485430-7cd9c1d4-45a2-491a-a618-9aba52ce0a21.png" width="500px"/>
@@ -89,9 +89,9 @@ According to our calculations, the FPS should increace tremendeously, let's chec
 ## Performance
 
 | Version      | Compilation flags | FPS           | Speed growth  |
-| ------      | :---------------: | :------------: | :---------- : |
+| ------      | :---------------: | :------------: | :----------: |
 | No AVX      | none              | 7.5            |   0.49        |
-| No AVX      | -О3               | 14             |   0.91      |
+| No AVX      | -О3               | 14             |   0.91        |
 | No AVX      | -Оfast            | 15.3           |   1          |
 | AVX         | none              | 24             |   1.56      |
 | AVX         | -О3               | 80             |   5.2       |
