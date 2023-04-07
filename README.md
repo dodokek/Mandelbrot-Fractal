@@ -16,12 +16,12 @@ Here is the example of what we want to get as a result of drawing.
 We draw each dot of this set independently according to the algorithm:
 
 Let's take a sequence on a complex plain wich looks like this:
-~~~
-Z_(n + 1) = Z_n ^ 2 + C_0
-~~~
-Where **C_0** is the point on the complex plane.
 
- The color of the point depends on how much iterations were made before the distance from **Z_n** to **C_0** got bigger than 2.
+$Z_{n + 1} = Z_n ^ 2 + C_0$
+
+Where $C_0$ is the point on the complex plane.
+
+ The color of the point depends on how much iterations were made before the distance from $Z_n$ to $C_0$ got bigger than 2.
 
 Here is the main part of calculations:
 ~~~C++
@@ -71,10 +71,8 @@ __m256 cmp_res = _mm256_cmp_ps (MAX_VECTOR_LEN, length2_avx, _CMP_GT_OQ);
 
 comparison_mask = _mm256_movemask_ps (cmp_res); 
 
-if (!comparison_mask) 
-{    
+if (!comparison_mask)     
     break;
-}    
 
 total_iterations = _mm256_sub_epi32 (total_iterations, _mm256_castps_si256 (cmp_res));  
 
@@ -110,7 +108,11 @@ SFML library, which I used in my project has it's disadvantages, such as slow ev
 
 ## Conclusion
 
-AVX optimization made a huge impact on FPS. By calculating 8 points at once, cycle of drawing speeded up almost 7 times.
+AVX optimization made a huge impact on FPS. By calculating 8 points at once, cycle of drawing speeded up almost 6 times. 
+
+Also, without optimization flags this method is not valid. As we could see from performance table, the rise in performance without compilaion flags was really small. 
+
+Interesting fact: As it turned out during the tests, FPS can rise up to 100 if battery settings on PC are set to *High performance*.
 
 ## Useful links 
 https://www.laruence.com/sse/   -    AVX documentation
